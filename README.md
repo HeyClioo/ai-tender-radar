@@ -2,6 +2,8 @@
 
 一个按日期浏览的 AI 招投标公开信息流。
 
+在线访问：<https://ai-tender-radar.vercel.app>
+
 这个仓库就是网站本身的公开源：网站代码、公开数据快照和日期索引都同步在这里。每日采集成功后，新的数据快照进入 GitHub，随后 Vercel 部署同一个仓库版本。
 
 ![AI 招投标信息流预览](docs/preview.png)
