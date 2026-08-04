@@ -28,7 +28,11 @@ test('首页与 README 使用用户查询意图描述 AI 招投标信息', async
   ]);
   assert.match(html, /<title>AI招投标信息网｜全国人工智能招标公告、政府采购与中标结果<\/title>/);
   assert.match(html, /<meta name="description" content="查询全国AI及人工智能招投标信息[^\"]+每日更新。" \/>/);
+  assert.match(html, /<meta property="og:site_name" content="AI招投标信息网" \/>/);
   assert.match(html, /<span class="eyebrow">全国 AI 招标采购信息<\/span>/);
+  assert.match(html, /<span>AI招投标信息网<\/span>/);
+  assert.match(html, /<h1 id="page-title">AI 招投标信息网<\/h1>/);
+  assert.doesNotMatch(html, /AI ?招投标信息流/);
   assert.match(readme, /^# AI 招投标信息网｜全国人工智能招标公告、政府采购与中标结果/m);
   assert.match(packageJson.description, /查询全国AI及人工智能招投标信息/);
 });
@@ -93,6 +97,8 @@ test('公告详情页提供唯一标题、摘要、canonical、结构化数据�
     assert.match(html, new RegExp(`<link rel="canonical" href="${detailUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}">`));
     assert.match(html, /<script type="application\/ld\+json">/);
     assert.match(html, /<h1>某高校AI助教智能体采购项目<\/h1>/);
+    assert.match(html, /aria-label="返回AI招投标信息网"/);
+    assert.doesNotMatch(html, /返回AI招投标信息流/);
     assert.match(html, /采购AI助教、知识库问答与课程资源生成服务。/);
     assert.match(html, /<time datetime="2026-08-03">2026年8月3日<\/time>/);
     assert.doesNotMatch(html, />2小时前<\/time>/);

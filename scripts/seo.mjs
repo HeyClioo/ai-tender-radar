@@ -134,7 +134,7 @@ function detailHtml(date, runAt, row) {
   </head>
   <body class="seo-detail-page">
     <header class="topbar">
-      <a class="brand" href="/" aria-label="返回AI招投标信息流">
+      <a class="brand" href="/" aria-label="返回AI招投标信息网">
         <span class="brand-mark"><span></span><span></span><span></span></span>
         <span>${SITE_NAME}</span>
       </a>
