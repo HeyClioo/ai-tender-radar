@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        { "key": "cache-control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" }
+      ]
+    }
+  ]
+}

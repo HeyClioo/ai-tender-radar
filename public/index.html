@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <title>AI招投标信息流</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="AI招投标信息流首页">
+          <span class="brand-mark"><span></span><span></span><span></span></span>
+          <span>AI招投标信息流</span>
+        </a>
+        <div class="topbar-meta"><span class="live-dot"></span><span>每日更新</span></div>
+        <button class="command-button" id="focus-search" type="button" title="聚焦搜索"><span>搜索</span><kbd>⌘ K</kbd></button>
+      </header>
+
+      <main>
+        <section class="feed-head" aria-labelledby="page-title">
+          <div>
+            <span class="eyebrow">公开采购信息</span>
+            <h1 id="page-title">AI 招投标信息流</h1>
+          </div>
+          <div class="date-picker">
+            <label for="date-select">选择日期</label>
+            <div class="date-nav">
+              <button id="prev-date" type="button" aria-label="前一天">‹</button>
+              <select id="date-select" aria-label="选择信息日期"><option>读取中</option></select>
+              <button id="next-date" type="button" aria-label="后一天">›</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="stat-strip" aria-label="数据统计">
+          <div class="stat-item"><span>信息</span><strong id="stat-total">—</strong><small>条</small></div>
+          <div class="stat-item"><span>有金额</span><strong id="stat-amount">—</strong><small>条</small></div>
+          <div class="stat-item"><span>中标/成交</span><strong id="stat-result">—</strong><small>条</small></div>
+        </div>
+
+        <section class="feed-section" id="feed">
+          <div class="section-heading">
+            <div><span class="section-index">当日信息</span><h2 id="feed-title">—</h2></div>
+            <span class="sort-label"><span class="sort-dot"></span>时间 ↓</span>
+          </div>
+          <div class="filter-bar">
+            <label class="search-box" for="search-input">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+              <input id="search-input" type="search" placeholder="搜索标题、正文、采购单位…" autocomplete="off" />
+              <kbd>⌘ K</kbd>
+            </label>
+            <div class="filter-pills" id="type-filters" role="group" aria-label="公告类型筛选"></div>
+            <button class="filter-toggle" id="amount-toggle" type="button" aria-pressed="false"><span class="toggle-mark">$</span>有金额</button>
+          </div>
+          <div class="feed-status"><span id="feed-count">正在加载</span><span class="status-separator">·</span><span id="feed-scope">按发布时间由近到远</span></div>
+          <div class="feed-list" id="feed-list" aria-live="polite"></div>
+          <button class="load-more" id="load-more" type="button">加载更多 <span>↓</span></button>
+        </section>
+      </main>
+
+      <footer class="footer"><span>AI招投标信息流</span><span>每日更新</span></footer>
+    </div>
+
+    <dialog class="detail-dialog" id="detail-dialog">
+      <div class="dialog-inner">
+        <div class="dialog-top"><span class="section-index">详情</span><button id="close-dialog" type="button" aria-label="关闭">×</button></div>
+        <div id="dialog-content"></div>
+      </div>
+    </dialog>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

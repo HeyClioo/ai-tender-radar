@@ -1,0 +1,13 @@
+{
+  "name": "ai-tender-radar",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "A date-browsable public feed for AI procurement and tender information.",
+  "scripts": {
+    "dev": "python3 -m http.server 4173 -d public",
+    "build:data": "node scripts/build-data-index.mjs .",
+    "validate": "node scripts/validate-public-data.mjs ."
+  },
+  "license": "MIT"
+}
