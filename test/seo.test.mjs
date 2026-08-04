@@ -33,7 +33,11 @@ test('首页与 README 使用用户查询意图描述 AI 招投标信息', async
   assert.match(html, /<span>AI招投标信息网<\/span>/);
   assert.match(html, /<h1 id="page-title">AI 招投标信息网<\/h1>/);
   assert.doesNotMatch(html, /AI ?招投标信息流/);
-  assert.match(readme, /^# AI 招投标信息网｜全国人工智能招标公告、政府采购与中标结果/m);
+  assert.match(readme, /<h1 align="center">AI 招投标信息网<\/h1>/);
+  assert.match(readme, /全国人工智能招标公告、政府采购、采购意向与中标结果/);
+  assert.match(readme, /谁正在买 AI、买什么、预算多少/);
+  assert.match(readme, /## 从公开采购信息，看见真实 AI 需求/);
+  assert.match(readme, /## 每条信息包含什么/);
   assert.match(packageJson.description, /查询全国AI及人工智能招投标信息/);
 });
 
