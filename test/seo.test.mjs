@@ -12,6 +12,14 @@ const execFileAsync = promisify(execFile);
 const projectDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const buildScript = path.join(projectDir, 'scripts/build-data-index.mjs');
 
+test('生产首页保留 Google Search Console 所有权验证标签', async () => {
+  const html = await readFile(path.join(projectDir, 'public/index.html'), 'utf8');
+  assert.match(
+    html,
+    /<meta name="google-site-verification" content="UXeSjPRmtX5kloll-gV3GungHWvIT2Dbhyt2M7LigRY" \/>/,
+  );
+});
+
 async function withFixture(run) {
   const repoDir = await mkdtemp(path.join(tmpdir(), 'ai-tender-seo-'));
   const snapshotDir = path.join(repoDir, 'public/data/snapshots');
