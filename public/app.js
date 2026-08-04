@@ -44,8 +44,8 @@ function displayDate(text) {
   const value = String(text ?? '').trim();
   const match = value.match(/(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})/);
   if (match) return `${match[2].padStart(2, '0')}.${match[3].padStart(2, '0')}`;
-  if (/刚刚/.test(value)) return '现在';
-  if (/(分钟前|小时前)/.test(value)) return '最近';
+  if (/刚刚/.test(value)) return '刚刚';
+  if (/(分钟前|小时前)/.test(value)) return value;
   return value || '—';
 }
 
@@ -89,9 +89,9 @@ function rowMarkup(row, index) {
   const buyer = escapeHtml(row.buyer || row.agency || '采购单位未披露');
   const region = escapeHtml(row.region || '全国');
   return `<article class="feed-item" data-index="${index}" tabindex="0" role="button" aria-label="查看：${escapeHtml(row.title)}">
-    <div class="item-time">${escapeHtml(displayDate(row.publishText))}<br /><span>${escapeHtml(row.publishText || '—')}</span></div>
+    <div class="item-time">${escapeHtml(displayDate(row.publishText))}</div>
     <div class="item-main"><div class="item-kicker"><span class="type-badge ${typeColors(type)}">${type}</span><span>${region}</span></div><h3>${escapeHtml(row.title)}</h3><p>${summary}</p><div class="item-meta"><strong>${buyer}</strong>${row.projectNo ? ` <span>· ${escapeHtml(row.projectNo)}</span>` : ''}</div></div>
-    <div class="item-amount ${amount.hasAmount ? 'has-amount' : ''}"><span>${amount.label}</span><strong>${escapeHtml(amount.value)}</strong>${amount.hasAmount ? '<small>人民币</small>' : ''}</div>
+    <div class="item-amount ${amount.hasAmount ? 'has-amount' : 'empty'}">${amount.hasAmount ? `<span>${amount.label}</span><strong>${escapeHtml(amount.value)}</strong><small>人民币</small>` : ''}</div>
     <button class="item-open" type="button" tabindex="-1" aria-hidden="true">↗</button>
   </article>`;
 }
@@ -114,7 +114,8 @@ function renderFeed() {
 
 function openDetail(row) {
   const amount = amountInfo(row);
-  $('#dialog-content').innerHTML = `<div class="dialog-kicker"><span class="type-badge ${typeColors(row.noticeType)}">${escapeHtml(row.noticeType || '未分类')}</span><span>${escapeHtml(row.region || '全国')}</span><span>${escapeHtml(row.publishText || dateLabel(state.date))}</span></div><h2 class="dialog-title">${escapeHtml(row.title)}</h2><div class="dialog-body">${escapeHtml(row.visibleSummary || '页面未提供正文摘要。')}</div><div class="dialog-meta"><div><span>采购单位</span><strong>${escapeHtml(row.buyer || '未披露')}</strong></div><div><span>${amount.label}</span><strong class="${amount.hasAmount ? 'amount-highlight' : ''}">${escapeHtml(amount.value)}${amount.hasAmount ? ' 人民币' : ''}</strong></div><div><span>项目编号</span><strong>${escapeHtml(row.projectNo || '未披露')}</strong></div><div><span>分类</span><strong>${escapeHtml((row.categories || []).join(' / ') || '未分类')}</strong></div></div>`;
+  const amountMeta = amount.hasAmount ? `<div><span>${amount.label}</span><strong class="amount-highlight">${escapeHtml(amount.value)} 人民币</strong></div>` : '';
+  $('#dialog-content').innerHTML = `<div class="dialog-kicker"><span class="type-badge ${typeColors(row.noticeType)}">${escapeHtml(row.noticeType || '未分类')}</span><span>${escapeHtml(row.region || '全国')}</span><span>${escapeHtml(row.publishText || dateLabel(state.date))}</span></div><h2 class="dialog-title">${escapeHtml(row.title)}</h2><div class="dialog-body">${escapeHtml(row.visibleSummary || '页面未提供正文摘要。')}</div><div class="dialog-meta"><div><span>采购单位</span><strong>${escapeHtml(row.buyer || '未披露')}</strong></div>${amountMeta}<div><span>项目编号</span><strong>${escapeHtml(row.projectNo || '未披露')}</strong></div><div><span>分类</span><strong>${escapeHtml((row.categories || []).join(' / ') || '未分类')}</strong></div></div>`;
   const dialog = $('#detail-dialog');
   if (typeof dialog.showModal === 'function') dialog.showModal();
   else dialog.setAttribute('open', '');
