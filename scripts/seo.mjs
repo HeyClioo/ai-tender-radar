@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const SITE_ORIGIN = 'https://ai-tender-radar.vercel.app';
 const SITE_NAME = 'AI招投标信息网';
+const ABOUT_LASTMOD = '2026-08-04';
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
@@ -138,7 +139,7 @@ function detailHtml(date, runAt, row) {
         <span class="brand-mark"><span></span><span></span><span></span></span>
         <span>${SITE_NAME}</span>
       </a>
-      <a class="detail-back" href="/">返回每日信息流</a>
+      <nav class="topbar-nav" aria-label="主导航"><a class="topbar-link" href="/">每日信息</a><a class="topbar-link" href="/about/">关于</a></nav>
     </header>
     <main class="seo-detail">
       <nav class="detail-breadcrumb" aria-label="面包屑"><a href="/">AI招投标信息</a><span>／</span><span>${escapeHtml(displayDate(date))}</span></nav>
@@ -152,7 +153,7 @@ function detailHtml(date, runAt, row) {
         </section>
       </article>
     </main>
-    <footer class="footer"><span>${SITE_NAME}</span><span>全国AI招标公告与采购信息每日更新</span></footer>
+    <footer class="footer"><span>${SITE_NAME}</span><nav class="footer-links" aria-label="页脚导航"><span>全国AI招标公告与采购信息每日更新</span><a href="/about/">关于</a></nav></footer>
   </body>
 </html>
 `;
@@ -184,6 +185,7 @@ export async function buildSeoArtifacts(repoDir, snapshots) {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>${SITE_ORIGIN}/</loc><lastmod>${latestDate}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>${SITE_ORIGIN}/about/</loc><lastmod>${ABOUT_LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 ${urls.map(({ url, lastmod }) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`).join('\n')}
 </urlset>
 `;
