@@ -54,6 +54,20 @@ function dateLabel(date) {
   return match ? `${match[1]}.${match[2]}.${match[3]}` : date || '—';
 }
 
+function tenderId(date, row) {
+  const source = [date, row?.projectNo, row?.title, row?.buyer, row?.region].map((value) => String(value ?? '')).join('|');
+  let hash = 2166136261;
+  for (let index = 0; index < source.length; index += 1) {
+    hash ^= source.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function tenderPath(row) {
+  return `/tenders/${state.date}/${tenderId(state.date, row)}/`;
+}
+
 function renderTypeFilters() {
   const container = $('#type-filters');
   const types = [...new Set(state.rows.map((row) => row.noticeType).filter(Boolean))];
@@ -88,12 +102,12 @@ function rowMarkup(row, index) {
   const summary = escapeHtml(row.visibleSummary || '页面未提供正文摘要。');
   const buyer = escapeHtml(row.buyer || row.agency || '采购单位未披露');
   const region = escapeHtml(row.region || '全国');
-  return `<article class="feed-item" data-index="${index}" tabindex="0" role="button" aria-label="查看：${escapeHtml(row.title)}">
+  return `<a class="feed-item" data-index="${index}" href="${tenderPath(row)}" aria-label="查看：${escapeHtml(row.title)}">
     <div class="item-time">${escapeHtml(displayDate(row.publishText))}</div>
     <div class="item-main"><div class="item-kicker"><span class="type-badge ${typeColors(type)}">${type}</span><span>${region}</span></div><h3>${escapeHtml(row.title)}</h3><p>${summary}</p><div class="item-meta"><strong>${buyer}</strong>${row.projectNo ? ` <span>· ${escapeHtml(row.projectNo)}</span>` : ''}</div></div>
     <div class="item-amount ${amount.hasAmount ? 'has-amount' : 'empty'}">${amount.hasAmount ? `<span>${amount.label}</span><strong>${escapeHtml(amount.value)}</strong><small>人民币</small>` : ''}</div>
-    <button class="item-open" type="button" tabindex="-1" aria-hidden="true">↗</button>
-  </article>`;
+    <span class="item-open" aria-hidden="true">↗</span>
+  </a>`;
 }
 
 function renderFeed() {
@@ -104,8 +118,11 @@ function renderFeed() {
   } else {
     list.innerHTML = visible.map((row) => rowMarkup(row, state.rows.indexOf(row))).join('');
     list.querySelectorAll('.feed-item').forEach((item) => {
-      item.addEventListener('click', () => openDetail(state.rows[Number(item.dataset.index)]));
-      item.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') openDetail(state.rows[Number(item.dataset.index)]); });
+      item.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        openDetail(state.rows[Number(item.dataset.index)]);
+      });
     });
   }
   setText('#feed-count', `${state.filtered.length.toLocaleString('zh-CN')} 条记录`);
