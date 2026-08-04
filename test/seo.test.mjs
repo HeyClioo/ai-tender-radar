@@ -78,6 +78,7 @@ test('数据索引构建时生成 robots、sitemap 和可抓取的公告详情�
     assert.equal(existsSync(sitemapPath), true, '应生成 sitemap.xml');
 
     const sitemap = await readFile(sitemapPath, 'utf8');
+    assert.match(sitemap, /<url><loc>https:\/\/ai-tender-radar\.vercel\.app\/about\/<\/loc><lastmod>2026-08-04<\/lastmod>/, 'sitemap 应包含关于页面及准确更新时间');
     const detailUrl = sitemap.match(/<loc>(https:\/\/ai-tender-radar\.vercel\.app\/tenders\/2026-08-03\/[^<]+\/)<\/loc>/)?.[1];
     assert.ok(detailUrl, 'sitemap 应包含公告独立 URL');
     assert.equal((sitemap.match(/\/tenders\/2026-08-03\//g) || []).length, 1, '重复记录不应产生重复 sitemap URL');
@@ -102,6 +103,7 @@ test('公告详情页提供唯一标题、摘要、canonical、结构化数据�
     assert.match(html, /<script type="application\/ld\+json">/);
     assert.match(html, /<h1>某高校AI助教智能体采购项目<\/h1>/);
     assert.match(html, /aria-label="返回AI招投标信息网"/);
+    assert.match(html, /href="\/about\/">关于<\/a>/);
     assert.doesNotMatch(html, /返回AI招投标信息流/);
     assert.match(html, /采购AI助教、知识库问答与课程资源生成服务。/);
     assert.match(html, /<time datetime="2026-08-03">2026年8月3日<\/time>/);
