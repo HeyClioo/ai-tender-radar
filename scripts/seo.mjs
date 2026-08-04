@@ -2,7 +2,7 @@ import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const SITE_ORIGIN = 'https://ai-tender-radar.vercel.app';
-const SITE_NAME = 'AI招投标信息流';
+const SITE_NAME = 'AI招投标信息网';
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
@@ -55,7 +55,7 @@ function detailDescription(date, row) {
 
 function detailKeywords(row) {
   return [...new Set([
-    compact(row.title, 80), 'AI招投标', 'AI招标公告', '人工智能采购',
+    compact(row.title, 80), 'AI招投标', 'AI招标公告', 'AI采购项目', '人工智能招标', '人工智能采购',
     compact(row.noticeType, 24), compact(row.buyer, 40), compact(row.region, 24),
   ].filter(Boolean))].join(',');
 }

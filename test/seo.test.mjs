@@ -20,6 +20,19 @@ test('生产首页保留 Google Search Console 所有权验证标签', async () 
   );
 });
 
+test('首页与 README 使用用户查询意图描述 AI 招投标信息', async () => {
+  const [html, readme, packageJson] = await Promise.all([
+    readFile(path.join(projectDir, 'public/index.html'), 'utf8'),
+    readFile(path.join(projectDir, 'README.md'), 'utf8'),
+    readFile(path.join(projectDir, 'package.json'), 'utf8').then(JSON.parse),
+  ]);
+  assert.match(html, /<title>AI招投标信息网｜全国人工智能招标公告、政府采购与中标结果<\/title>/);
+  assert.match(html, /<meta name="description" content="查询全国AI及人工智能招投标信息[^\"]+每日更新。" \/>/);
+  assert.match(html, /<span class="eyebrow">全国 AI 招标采购信息<\/span>/);
+  assert.match(readme, /^# AI 招投标信息网｜全国人工智能招标公告、政府采购与中标结果/m);
+  assert.match(packageJson.description, /查询全国AI及人工智能招投标信息/);
+});
+
 async function withFixture(run) {
   const repoDir = await mkdtemp(path.join(tmpdir(), 'ai-tender-seo-'));
   const snapshotDir = path.join(repoDir, 'public/data/snapshots');
@@ -75,7 +88,7 @@ test('公告详情页提供唯一标题、摘要、canonical、结构化数据�
     assert.ok(detailUrl);
     const html = await readFile(path.join(repoDir, 'public', new URL(detailUrl).pathname, 'index.html'), 'utf8');
 
-    assert.match(html, /<title>某高校AI助教智能体采购项目｜招标公告｜AI招投标信息流<\/title>/);
+    assert.match(html, /<title>某高校AI助教智能体采购项目｜招标公告｜AI招投标信息网<\/title>/);
     assert.match(html, /<meta name="description" content="[^"]*某高校[^"]*19万元[^"]*">/);
     assert.match(html, new RegExp(`<link rel="canonical" href="${detailUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}">`));
     assert.match(html, /<script type="application\/ld\+json">/);
