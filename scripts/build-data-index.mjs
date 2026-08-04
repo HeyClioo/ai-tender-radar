@@ -17,5 +17,6 @@ for (const file of files) {
   dates.push({ date, count: Array.isArray(payload.rows) ? payload.rows.length : 0, runAt: payload.runAt ?? '' });
 }
 dates.sort((left, right) => right.date.localeCompare(left.date));
-await writeFile(outputPath, `${JSON.stringify({ generatedAt: new Date().toISOString(), dates, currentDate: dates[0]?.date ?? '' }, null, 2)}\n`);
+const generatedAt = dates.map((entry) => entry.runAt).filter(Boolean).sort().at(-1) ?? '';
+await writeFile(outputPath, `${JSON.stringify({ generatedAt, dates, currentDate: dates[0]?.date ?? '' }, null, 2)}\n`);
 process.stdout.write(`生成 ${path.relative(repoDir, outputPath)}：${dates.length} 个日期\n`);
