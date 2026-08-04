@@ -1,3 +1,5 @@
+import { copyTitle } from './copy-title.js';
+
 const state = {
   rows: [],
   filtered: [],
@@ -132,7 +134,24 @@ function renderFeed() {
 function openDetail(row) {
   const amount = amountInfo(row);
   const amountMeta = amount.hasAmount ? `<div><span>${amount.label}</span><strong class="amount-highlight">${escapeHtml(amount.value)} 人民币</strong></div>` : '';
-  $('#dialog-content').innerHTML = `<div class="dialog-kicker"><span class="type-badge ${typeColors(row.noticeType)}">${escapeHtml(row.noticeType || '未分类')}</span><span>${escapeHtml(row.region || '全国')}</span><span>${escapeHtml(row.publishText || dateLabel(state.date))}</span></div><h2 class="dialog-title">${escapeHtml(row.title)}</h2><div class="dialog-body">${escapeHtml(row.visibleSummary || '页面未提供正文摘要。')}</div><div class="dialog-meta"><div><span>采购单位</span><strong>${escapeHtml(row.buyer || '未披露')}</strong></div>${amountMeta}<div><span>项目编号</span><strong>${escapeHtml(row.projectNo || '未披露')}</strong></div><div><span>分类</span><strong>${escapeHtml((row.categories || []).join(' / ') || '未分类')}</strong></div></div>`;
+  $('#dialog-content').innerHTML = `<div class="dialog-kicker"><span class="type-badge ${typeColors(row.noticeType)}">${escapeHtml(row.noticeType || '未分类')}</span><span>${escapeHtml(row.region || '全国')}</span><span>${escapeHtml(row.publishText || dateLabel(state.date))}</span></div><div class="dialog-title-row"><h2 class="dialog-title">${escapeHtml(row.title)}</h2><button class="copy-title-button" type="button" aria-label="复制标题" title="复制标题"><svg class="copy-icon-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="1"></rect><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"></path></svg><svg class="copy-icon-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></button></div><div class="dialog-body">${escapeHtml(row.visibleSummary || '页面未提供正文摘要。')}</div><div class="dialog-meta"><div><span>采购单位</span><strong>${escapeHtml(row.buyer || '未披露')}</strong></div>${amountMeta}<div><span>项目编号</span><strong>${escapeHtml(row.projectNo || '未披露')}</strong></div><div><span>分类</span><strong>${escapeHtml((row.categories || []).join(' / ') || '未分类')}</strong></div></div>`;
+  const copyButton = $('#dialog-content .copy-title-button');
+  copyButton.addEventListener('click', async () => {
+    try {
+      await copyTitle(row.title);
+      copyButton.classList.add('copied');
+      copyButton.setAttribute('aria-label', '标题已复制');
+      copyButton.title = '标题已复制';
+      window.setTimeout(() => {
+        copyButton.classList.remove('copied');
+        copyButton.setAttribute('aria-label', '复制标题');
+        copyButton.title = '复制标题';
+      }, 1600);
+    } catch {
+      copyButton.setAttribute('aria-label', '复制失败');
+      copyButton.title = '复制失败';
+    }
+  });
   const dialog = $('#detail-dialog');
   if (typeof dialog.showModal === 'function') dialog.showModal();
   else dialog.setAttribute('open', '');
