@@ -6,7 +6,7 @@ The repository contains the deployed read-only web interface and sanitized JSON 
 
 ## Snapshot contract
 
-Each file under `data/snapshots/` is named `YYYY-MM-DD.json` and contains:
+Each file under `public/data/snapshots/` is named `YYYY-MM-DD.json` and contains:
 
 ```json
 {
@@ -23,7 +23,7 @@ Each file under `data/snapshots/` is named `YYYY-MM-DD.json` and contains:
 }
 ```
 
-The browser reads `data/dates.json`, then loads the selected snapshot directly from `/data/snapshots/<date>.json`. This keeps Vercel deployment static and makes every displayed date inspectable in Git history.
+The browser reads `public/data/dates.json`, then loads the selected snapshot directly from `/data/snapshots/<date>.json`. This keeps Vercel deployment static and makes every displayed date inspectable in Git history.
 
 ## Update lifecycle
 

@@ -5,8 +5,8 @@ The public repository is the content source for the deployed site. The private c
 ```text
 private n8n run
   -> data/raw/<run>.json
-  -> public repository data/snapshots/<date>.json
-  -> data/dates.json
+  -> public repository public/data/snapshots/<date>.json
+  -> public/data/dates.json
   -> git commit + git push
   -> vercel --prod
 ```

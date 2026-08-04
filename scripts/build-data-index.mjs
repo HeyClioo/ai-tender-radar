@@ -3,8 +3,8 @@ import path from 'node:path';
 import { readJson, snapshotDate, findProhibitedValues } from './public-data.mjs';
 
 const repoDir = path.resolve(process.argv[2] ?? process.cwd());
-const snapshotDir = path.join(repoDir, 'data/snapshots');
-const outputPath = path.join(repoDir, 'data/dates.json');
+const snapshotDir = path.join(repoDir, 'public/data/snapshots');
+const outputPath = path.join(repoDir, 'public/data/dates.json');
 
 await mkdir(snapshotDir, { recursive: true });
 const files = (await readdir(snapshotDir)).filter((file) => /^\d{4}-\d{2}-\d{2}\.json$/.test(file));

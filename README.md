@@ -21,8 +21,8 @@
 ```mermaid
 flowchart LR
   A[私有 n8n / 本机浏览器] -->|每日生成快照| B[scripts/publish-snapshot.mjs]
-  B --> C[data/snapshots/YYYY-MM-DD.json]
-  B --> D[data/dates.json]
+  B --> C[public/data/snapshots/YYYY-MM-DD.json]
+  B --> D[public/data/dates.json]
   C --> E[GitHub main]
   D --> E
   E -->|同一版本部署| F[Vercel 网站]
@@ -52,14 +52,14 @@ node scripts/publish-snapshot.mjs \
 脚本会：
 
 1. 只保留公开字段；
-2. 写入 `data/snapshots/YYYY-MM-DD.json`；
-3. 重建 `data/dates.json`；
+2. 写入 `public/data/snapshots/YYYY-MM-DD.json`；
+3. 重建 `public/data/dates.json`；
 4. 检查禁止字段和快照结构。
 
 完成后提交并推送：
 
 ```bash
-git add data/
+git add public/data/
 git commit -m "data: update tender feed"
 git push origin main
 ```
@@ -76,8 +76,8 @@ git push origin main
 
 ```text
 public/                 网站页面、脚本和样式
-data/snapshots/         按日期保存的公开信息
-data/dates.json         日期下拉和条数索引
+public/data/snapshots/  按日期保存的公开信息
+public/data/dates.json  日期下拉和条数索引
 scripts/                数据裁剪、索引和校验工具
 docs/                   架构说明与预览图
 ```

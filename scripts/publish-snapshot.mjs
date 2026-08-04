@@ -23,7 +23,7 @@ const repoDir = path.resolve(argument('--repo', process.cwd()));
 const snapshot = sanitizeSnapshot(await readJson(inputPath));
 const prohibited = findProhibitedValues(snapshot);
 if (prohibited.length) throw new Error(`拒绝发布，发现禁止内容：${prohibited.join(', ')}`);
-const targetDir = path.join(repoDir, 'data/snapshots');
+const targetDir = path.join(repoDir, 'public/data/snapshots');
 await mkdir(targetDir, { recursive: true });
 await writeFile(path.join(targetDir, `${snapshot.date}.json`), `${JSON.stringify(snapshot, null, 2)}\n`);
 await run(process.execPath, [path.join(repoDir, 'scripts/build-data-index.mjs'), repoDir], repoDir);
