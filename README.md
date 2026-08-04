@@ -2,7 +2,7 @@
 
 一个按日期浏览的 AI 招投标公开信息流。
 
-这个仓库就是网站本身的公开源：网站代码、公开数据快照和日期索引都同步在这里。Vercel 部署 `main` 分支，新的数据快照进入 GitHub 后，网站自动更新。
+这个仓库就是网站本身的公开源：网站代码、公开数据快照和日期索引都同步在这里。每日采集成功后，新的数据快照进入 GitHub，随后 Vercel 部署同一个仓库版本。
 
 ![AI 招投标信息流预览](docs/preview.png)
 
@@ -25,7 +25,7 @@ flowchart LR
   B --> D[data/dates.json]
   C --> E[GitHub main]
   D --> E
-  E -->|Git 集成自动部署| F[Vercel 网站]
+  E -->|同一版本部署| F[Vercel 网站]
 ```
 
 每天发布的内容包括：标题、正文摘要、公告类型、地区、采购单位、代理单位、项目编号、预算、中标金额、发布时间和分类。不会发布浏览器配置、Cookie、飞书密钥、SQLite 状态或 n8n 配置。
@@ -68,7 +68,7 @@ git push origin main
 
 1. 在 Vercel 导入这个 GitHub 仓库。
 2. Framework 选择 `Other`，Build Command 留空，Output Directory 留空。
-3. 每次 `main` 分支有新提交时，Vercel 自动重新部署。
+3. 私有发布器推送 `main` 后执行 Vercel 生产部署；也可以在 Vercel 控制台连接 GitHub，让 Vercel 接管自动部署。
 
 本项目是纯静态站点，不需要数据库、运行时密钥或后端服务。
 
