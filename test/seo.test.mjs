@@ -45,6 +45,10 @@ async function withFixture(run) {
   const repoDir = await mkdtemp(path.join(tmpdir(), 'ai-tender-seo-'));
   const snapshotDir = path.join(repoDir, 'public/data/snapshots');
   await mkdir(snapshotDir, { recursive: true });
+  await writeFile(
+    path.join(repoDir, 'public/index.html'),
+    await readFile(path.join(projectDir, 'public/index.html'), 'utf8'),
+  );
   const row = {
     title: '某高校AI助教智能体采购项目',
     visibleSummary: '采购AI助教、知识库问答与课程资源生成服务。',
@@ -58,10 +62,17 @@ async function withFixture(run) {
     publishText: '2小时前',
     categories: ['服务', '教育'],
   };
+  const attachmentOnly = {
+    ...row,
+    visibleSummary: '点击查看公告内容：某高校AI助教智能体采购项目.pdf',
+    noticeType: '',
+    agency: '',
+    categories: ['服务'],
+  };
   await writeFile(path.join(snapshotDir, '2026-08-03.json'), JSON.stringify({
     date: '2026-08-03',
     runAt: '2026-08-04T08:00:00+08:00',
-    rows: [row, row],
+    rows: [attachmentOnly, row],
   }));
   try {
     await execFileAsync(process.execPath, [buildScript, repoDir]);
@@ -79,12 +90,32 @@ test('数据索引构建时生成 robots、sitemap 和可抓取的公告详情�
 
     const sitemap = await readFile(sitemapPath, 'utf8');
     assert.match(sitemap, /<url><loc>https:\/\/ai-tender-radar\.vercel\.app\/about\/<\/loc><lastmod>2026-08-04<\/lastmod>/, 'sitemap 应包含关于页面及准确更新时间');
+    assert.match(sitemap, /<url><loc>https:\/\/ai-tender-radar\.vercel\.app\/date\/2026-08-03\/<\/loc><lastmod>2026-08-03<\/lastmod>/, 'sitemap 应包含日期归档页面');
     const detailUrl = sitemap.match(/<loc>(https:\/\/ai-tender-radar\.vercel\.app\/tenders\/2026-08-03\/[^<]+\/)<\/loc>/)?.[1];
     assert.ok(detailUrl, 'sitemap 应包含公告独立 URL');
     assert.equal((sitemap.match(/\/tenders\/2026-08-03\//g) || []).length, 1, '重复记录不应产生重复 sitemap URL');
 
     const detailPath = path.join(repoDir, 'public', new URL(detailUrl).pathname, 'index.html');
     assert.equal(existsSync(detailPath), true, '公告 URL 应有静态 HTML');
+    assert.equal(existsSync(path.join(repoDir, 'public/date/2026-08-03/index.html')), true, '应生成日期归档页面');
+  });
+});
+
+test('首页预渲染最新日期公告链接，日期归档提供完整可抓取列表', async () => {
+  await withFixture(async (repoDir) => {
+    const home = await readFile(path.join(repoDir, 'public/index.html'), 'utf8');
+    const archive = await readFile(path.join(repoDir, 'public/date/2026-08-03/index.html'), 'utf8');
+    const dates = JSON.parse(await readFile(path.join(repoDir, 'public/data/dates.json'), 'utf8'));
+
+    assert.match(home, /<!-- STATIC_FEED_START -->[\s\S]*href="\/tenders\/2026-08-03\//);
+    assert.match(home, /某高校AI助教智能体采购项目/);
+    assert.match(home, /<h2 id="feed-title">2026\.08\.03<\/h2>/);
+    assert.match(archive, /<title>2026年8月3日 AI招标公告、政府采购与中标结果｜AI招投标信息网<\/title>/);
+    assert.match(archive, /<link rel="canonical" href="https:\/\/ai-tender-radar\.vercel\.app\/date\/2026-08-03\/">/);
+    assert.match(archive, /某高校AI助教智能体采购项目/);
+    assert.equal((archive.match(/class="feed-item"/g) || []).length, 1, '日期页不应重复展示同一公告');
+    assert.match(archive, /"@type":"ItemList"/);
+    assert.equal(dates.dates[0].count, 1, '日期统计应使用去重后的公开记录数');
   });
 });
 
@@ -106,6 +137,9 @@ test('公告详情页提供唯一标题、摘要、canonical、结构化数据�
     assert.match(html, /href="\/about\/">关于<\/a>/);
     assert.doesNotMatch(html, /返回AI招投标信息流/);
     assert.match(html, /采购AI助教、知识库问答与课程资源生成服务。/);
+    assert.doesNotMatch(html, /某高校AI助教智能体采购项目某高校AI助教智能体采购项目/);
+    assert.match(html, /href="\/date\/2026-08-03\/">2026年8月3日<\/a>/);
+    assert.match(html, /"position":2,"name":"2026年8月3日","item":"https:\/\/ai-tender-radar\.vercel\.app\/date\/2026-08-03\/"/);
     assert.match(html, /<time datetime="2026-08-03">2026年8月3日<\/time>/);
     assert.doesNotMatch(html, />2小时前<\/time>/);
   });

@@ -9,6 +9,7 @@ data/raw/
 data/state/
 data/browser-profile/
 output/
+.playwright-cli/
 *.sqlite
 *.sqlite-*
 *.log

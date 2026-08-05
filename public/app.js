@@ -1,4 +1,5 @@
 import { copyTitle } from './copy-title.js';
+import { dedupeTenderRows, tenderId } from './tender-data.js';
 
 const state = {
   rows: [],
@@ -54,16 +55,6 @@ function displayDate(text) {
 function dateLabel(date) {
   const match = String(date ?? '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
   return match ? `${match[1]}.${match[2]}.${match[3]}` : date || '—';
-}
-
-function tenderId(date, row) {
-  const source = [date, row?.projectNo, row?.title, row?.buyer, row?.region].map((value) => String(value ?? '')).join('|');
-  let hash = 2166136261;
-  for (let index = 0; index < source.length; index += 1) {
-    hash ^= source.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return (hash >>> 0).toString(36);
 }
 
 function tenderPath(row) {
@@ -192,7 +183,7 @@ async function loadData() {
     const response = await fetch(`/data/snapshots/${encodeURIComponent(state.date)}.json`, { cache: 'no-store' });
     if (!response.ok) throw new Error('API unavailable');
     const payload = await response.json();
-    state.rows = payload.rows || [];
+    state.rows = dedupeTenderRows(state.date, payload.rows || []);
     state.meta = payload.meta || {};
   } catch (error) {
     $('#feed-list').innerHTML = '<div class="empty-state">当前日期的数据暂不可用。</div>';
